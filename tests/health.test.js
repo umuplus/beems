@@ -26,8 +26,8 @@ class TestService extends Service {
 
 const prefix = `beems_test_${ Math.floor(Math.random() * 100000) }`;
 
-const client = new Client({ bee: { prefix }, level: 'debug' });
-const server = new Server({ bee: { prefix }, level: 'debug' });
+const client = new Client({ bee: { prefix }, pino: { level: 'debug' } });
+const server = new Server({ bee: { prefix }, pino: { level: 'debug' } });
 
 beforeAll(async done => {
     server.addServices([ new TestService('test') ]);

@@ -66,8 +66,8 @@ const r = await client.send('test', 'echo', { t: Date.now() })
 console.log(r);
 
 await client.close();
-await server.close();
 await server.destroy();
+await server.close();
 ```
 
 ## Optional Job Configuration
