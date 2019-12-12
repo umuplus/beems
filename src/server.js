@@ -42,7 +42,7 @@ class Server extends Base {
      * @throws Error
      * @memberof Server
      */
-    addService(instance, concurrency = 1, options) {
+    async addService(instance, concurrency = 1, options) {
         if (is.object(concurrency)) {
             options = concurrency;
             concurrency = 1;
@@ -56,27 +56,26 @@ class Server extends Base {
         const name = instance._name();
         if (is.not.existy(this.services[name])) {
             this.services[name] = new Queue(name, options);
-            this.services[name].ready(() => {
-                this.logger.info(`${ name }|ready`);
-                this.services[name].on('error',
-                    e => this.logger.warn(`${ name }|E|${ e.message }`));
-                if (this.logger.isLevelEnabled('warn')) {
-                    this.services[name].on('failed',
-                        (j, e) => this.logger.warn(`${ name }|F|${ j.id }|${ e.message }`));
-                    this.services[name].on('stalled',
-                        (j) => this.logger.warn(`${ name }|S|${ j }`));
-                }
-                if (this.logger.isLevelEnabled('info')) {
-                    this.services[name].on('retrying',
-                        (j, e) => this.logger.info(`${ name }|R|${ j.id }|${ e.message }`));
-                    this.services[name].on('job progress',
-                        (j, p) => this.logger.info(`${ name }|P|${ j }|${ p }%`));
-                    this.services[name].on('succeeded', (j, r) => {
-                        this.logger.info(`${ name }|OK|${ j.id }|${ JSON.stringify(r) }`);
-                    });
-                }
-                this.services[name].process(concurrency, async job => await instance._run(job));
-            });
+            await this.services[name].ready();
+            this.logger.info(`${ name }|ready(S)`);
+            this.services[name].on('error',
+                e => this.logger.warn(`${ name }|E|${ e.message }`));
+            if (this.logger.isLevelEnabled('warn')) {
+                this.services[name].on('failed',
+                    (j, e) => this.logger.warn(`${ name }|F|${ j.id }|${ e.message }`));
+                this.services[name].on('stalled',
+                    (j) => this.logger.warn(`${ name }|S|${ j }`));
+            }
+            if (this.logger.isLevelEnabled('info')) {
+                this.services[name].on('retrying',
+                    (j, e) => this.logger.info(`${ name }|R|${ j.id }|${ e.message }`));
+                this.services[name].on('job progress',
+                    (j, p) => this.logger.info(`${ name }|P|${ j }|${ p }%`));
+                this.services[name].on('succeeded', (j, r) => {
+                    this.logger.info(`${ name }|OK|${ j.id }|${ JSON.stringify(r) }`);
+                });
+            }
+            this.services[name].process(concurrency, async job => await instance._run(job));
         }
     }
 

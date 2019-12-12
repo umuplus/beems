@@ -49,7 +49,7 @@ class Client extends Base {
 
         if (is.not.existy(this.services[service])) {
             this.services[service] = new Queue(service, options);
-            this.logger.info(`${ service }|client`);
+            this.logger.info(`${ service }|ready(C)`);
         } else this.logger.warn(`${ service }|exists`);
     }
 
