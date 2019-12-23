@@ -1,20 +1,23 @@
 {
   "name": "beems",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "a bee-queue based minimalist toolkit for building fast, decentralized and scalable microservices",
   "keywords": [
     "bee",
     "queue",
     "soa",
     "rpc",
+    "fault tolerance",
     "scalability",
-    "microservices"
+    "microservice"
   ],
-  "main": "index.js",
-  "typings": "index.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
-    "coverage": "./node_modules/.bin/jest --coverage",
-    "test": "./node_modules/.bin/jest"
+    "prepare": "npm run build",
+    "build": "tsc",
+    "pretest": "npm run build",
+    "test": "jest"
   },
   "author": {
     "name": "Umut Aydin"
@@ -31,17 +34,18 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.2",
-    "jest": "^24.9.0"
+    "@types/jest": "^24.0.24",
+    "@types/pino": "^5.15.1",
+    "@types/redis": "^2.8.14",
+    "@types/shortid": "0.0.29",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "bee-queue": "^1.2.2",
-    "is_js": "^0.9.0",
-    "pino": "^5.15.0"
-  },
-  "jest": {
-    "testEnvironment": "node"
+    "pino": "^5.15.0",
+    "shortid": "^2.2.15"
   }
 }
