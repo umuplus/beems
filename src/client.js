@@ -15,7 +15,8 @@ class Client extends Base {
     constructor(options) {
         super(options);
 
-        if (is.not.object(this.options.bee)) this.options.bee = {};
+        if (is.not.object(this.options.bee) || is.array(this.options.bee))
+            this.options.bee = {};
         this.options.bee.isWorker = false;
     }
 
@@ -29,9 +30,7 @@ class Client extends Base {
     acceptServices(services, options) {
         if (is.not.array(services)) throw new Error('invalid services');
 
-        services.forEach(service => {
-            this.acceptService(service, options);
-        });
+        for (const service of services) this.acceptService(service, options);
     }
 
     /**
@@ -43,9 +42,10 @@ class Client extends Base {
      * @memberof Client
      */
     acceptService(service, options) {
-        if (is.not.object(options)) options = this.options.bee;
-        if (is.not.string(service)) throw new Error('invalid service');
-        if (is.not.object(options)) throw new Error('invalid options');
+        if (is.not.object(options) || is.array(options)) options = this.options.bee;
+        if (is.not.string(service) || is.empty(service))
+            throw new Error('invalid service');
+        else if (is.not.object(options)) throw new Error('invalid options');
 
         if (is.not.existy(this.services[service])) {
             this.services[service] = new Queue(service, options);
@@ -64,11 +64,12 @@ class Client extends Base {
      * @memberof Client
      */
     async forward(service, method, data, options) {
-        if (is.not.object(options)) options = this.options.job || {};
+        if (is.not.object(options) || is.array(options)) options = this.options.job || {};
         if (is.not.string(service) || is.empty(service)) throw new Error('invalid service');
         else if (is.not.string(method) || is.empty(method)) throw new Error('invalid method');
         else if (is.not.object(data) || is.array(data)) throw new Error('invalid data');
-        else if (is.not.object(options) || is.array(options)) throw new Error('invalid options');
+        else if (is.not.object(options) || is.array(options))
+            throw new Error('invalid options');
 
         data._ = method;
         const job = this.services[service].createJob(data);

@@ -24,12 +24,11 @@ class Server extends Base {
      * @throws Error
      * @memberof Server
      */
-    addServices(services, concurrency = 1, options) {
+    async addServices(services, concurrency = 1, options) {
         if (is.not.array(services)) throw new Error('invalid services');
 
-        services.forEach(service => {
-            this.addService(service, concurrency, options);
-        });
+        for (const service of services)
+            await this.addService(service, concurrency, options);
     }
 
     /**
@@ -49,9 +48,7 @@ class Server extends Base {
         }
         if (is.not.object(options)) options = this.options.bee;
         else if (!(instance instanceof Service))
-            throw new Error('service must be an instance of a class that extends "Service"');
-        else if (is.not.number(concurrency)) throw new Error('invalid concurrency');
-        else if (is.not.object(options)) throw new Error('invalid options');
+            throw new Error('service must be an instance of a class that extends Service');
 
         const name = instance._name();
         if (is.not.existy(this.services[name])) {
