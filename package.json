@@ -1,12 +1,14 @@
 {
   "name": "beems",
-  "version": "0.4.3",
-  "description": "a bee-queue based minimalist toolkit for building fast, decentralized and scalable microservices",
+  "version": "0.4.4",
+  "description": "a bee-queue based minimalist toolkit for building fast, decentralized, fault tolerant and scalable microservices",
   "keywords": [
     "bee",
     "queue",
     "soa",
     "rpc",
+    "concurrency",
+    "fault-tolerant",
     "scalability",
     "microservices"
   ],
