@@ -32,8 +32,10 @@ docker run -p 6379:6379 --name beems_redis redis:4-alpine
 
 ## Server Methods
 
-- **.addServices(services, concurrency = 1, options):** adds list of services and automatically creates their queues and consumers
-- **.addService(service, concurrency = 1, options):** adds a new service and automatically creates related queue and its consumer
+- **.addServices(services, concurrency = cpus().length, options):**
+    adds list of services and automatically creates their queues and consumers
+- **.addService(service, concurrency = cpus().length, options):**
+    adds a new service and automatically creates related queue and its consumer
 - **.close():** stops all existing queues for a clean shutdown
 - **.destroy():** removes everything about existing queues from redis
 
@@ -62,7 +64,9 @@ const server = new Server();
 server.addServices([ new TestService('test') ], cpus().length);
 client.acceptServices([ 'test' ]);
 
-const r = await client.send('test', 'echo', { t: Date.now() })
+const r = await client.send('test', 'echo', {
+    t: Date.now()
+});
 console.log(r);
 
 await client.close();
