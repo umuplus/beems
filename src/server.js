@@ -4,6 +4,7 @@ const Base = require('./base');
 const is = require('is_js');
 const Queue = require('bee-queue');
 const Service = require('./service');
+const { cpus } = require('os');
 
 class Server extends Base {
     /**
@@ -24,7 +25,7 @@ class Server extends Base {
      * @throws Error
      * @memberof Server
      */
-    async addServices(services, concurrency = 1, options) {
+    async addServices(services, concurrency = cpus().length, options) {
         if (is.not.array(services)) throw new Error('invalid services');
 
         for (const service of services)
@@ -41,7 +42,7 @@ class Server extends Base {
      * @throws Error
      * @memberof Server
      */
-    async addService(instance, concurrency = 1, options) {
+    async addService(instance, concurrency = cpus().length, options) {
         if (is.object(concurrency)) {
             options = concurrency;
             concurrency = 1;
