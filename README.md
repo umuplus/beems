@@ -1,6 +1,6 @@
-# beems (formerly dot-bee)
+# Documentation
 
-a bee-queue based minimalist toolkit for building fast, decentralized, scalable and fault tolerant microservices
+A Bee Queue based minimalist toolkit for building fast, decentralized, scalable and fault tolerant microservices
 
 ## Install
 
