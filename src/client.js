@@ -47,10 +47,8 @@ class Client extends Base {
             throw new Error('invalid service');
         else if (is.not.object(options)) throw new Error('invalid options');
 
-        if (is.not.existy(this.services[service])) {
+        if (is.not.existy(this.services[service]))
             this.services[service] = new Queue(service, options);
-            this.logger.info(`${ service }|ready(C)`);
-        } else this.logger.warn(`${ service }|exists`);
     }
 
     /**
@@ -78,7 +76,6 @@ class Client extends Base {
                 if (is.array(options[config])) job[config](...options[config]);
                 else job[config](options[config]);
         await job.save();
-        this.logger.info(`${ service }|${ method }|C|${ JSON.stringify(data) }`);
         return job;
     }
 
@@ -97,6 +94,7 @@ class Client extends Base {
         return new Promise((resolve, reject) => {
             job.on('succeeded', resolve);
             job.on('failed', reject);
+            // TODO: do we need to handle another event too?!
         });
     }
 

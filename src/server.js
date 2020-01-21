@@ -55,24 +55,11 @@ class Server extends Base {
         if (is.not.existy(this.services[name])) {
             this.services[name] = new Queue(name, options);
             await this.services[name].ready();
-            this.logger.info(`${ name }|ready(S)`);
-            this.services[name].on('error',
-                e => this.logger.warn(`${ name }|E|${ e.message }`));
-            if (this.logger.isLevelEnabled('warn')) {
-                this.services[name].on('failed',
-                    (j, e) => this.logger.warn(`${ name }|F|${ j.id }|${ e.message }`));
-                this.services[name].on('stalled',
-                    (j) => this.logger.warn(`${ name }|S|${ j }`));
-            }
-            if (this.logger.isLevelEnabled('info')) {
-                this.services[name].on('retrying',
-                    (j, e) => this.logger.info(`${ name }|R|${ j.id }|${ e.message }`));
-                this.services[name].on('job progress',
-                    (j, p) => this.logger.info(`${ name }|P|${ j }|${ p }%`));
-                this.services[name].on('succeeded', (j, r) => {
-                    this.logger.info(`${ name }|OK|${ j.id }|${ JSON.stringify(r) }`);
-                });
-            }
+            if (is.object(this.options.on))
+                for (const event of Object.keys(this.options.on)) {
+                    if (is.function(this.options.on[event]))
+                        this.services[name].on(event, this.options.on[event]);
+                }
             this.services[name].process(concurrency, async job => await instance._run(job));
         }
     }
