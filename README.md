@@ -28,6 +28,7 @@ docker run -p 6379:6379 --name beems_redis redis:4-alpine
 
 - **bee:** options for initializing a bee queue instance. please see more details at [Bee Queue Settings](https://github.com/bee-queue/bee-queue#settings).
 - **job:** options for creating a bee queue job. only setId, retries, backoff, delayUntil and timeout methods allowed. please see more details at [Bee Queue Job Settings](https://github.com/bee-queue/bee-queue#methods-1).
+- **on:** event handlers for server. please see more details at [Queue Local Events](https://github.com/bee-queue/bee-queue#queue-local-events)
 - **pino:** options for pino logger. it's { "level": "error" } by default.
 
 ## Server Methods
@@ -60,7 +61,9 @@ class TestService extends Service {
 }
 
 const client = new Client();
-const server = new Server();
+const server = new Server({
+    on: { failed: (j, e) => server.logger.error(j.id, e.message) }
+});
 server.addServices([ new TestService('test') ], cpus().length);
 client.acceptServices([ 'test' ]);
 
@@ -87,3 +90,7 @@ await client.send('test', 'echo', { t: Date.now() }, {
     timeout: 10000
 });
 ```
+
+## TODO
+
+- Add some useful logs
