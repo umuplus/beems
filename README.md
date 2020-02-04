@@ -44,7 +44,10 @@ docker run -p 6379:6379 --name beems_redis redis:4-alpine
 
 - **.acceptServices(services, options):** accepts existing services to send jobs
 - **.acceptService(service, options):** accepts an existing service to send jobs
-- **.forward(service, method, data, options):** sends a new job to an existing service
+- **.forward(service, method, data, options):** sends a new job to an existing service and
+returns a [Job](https://github.com/bee-queue/bee-queue#job) instance
+- **.health(service):** returns number of jobs for each state
+- **.job(service, id):** returns an existing [Job](https://github.com/bee-queue/bee-queue#job) by id
 - **.send(service, method, data, options):** sends a new job to an existing service and retrieves its response
 - **.close():** stops all existing queues for a clean shutdown
 
@@ -67,10 +70,13 @@ const server = new Server({
 server.addServices([ new TestService('test') ], cpus().length);
 client.acceptServices([ 'test' ]);
 
-const r = await client.send('test', 'echo', {
-    t: Date.now()
-});
-console.log(r);
+try {
+    const data = { t: Date.now() };
+    const { job, response } = await client.send('test', 'echo', data);
+    console.log(job.id, response);
+} catch({ job, error: e }) {
+    console(job.id, e.message);
+}
 
 await client.close();
 await server.destroy();
