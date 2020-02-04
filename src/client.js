@@ -64,8 +64,9 @@ class Client extends Base {
     async forward(service, method, data, options) {
         if (is.not.object(options) || is.array(options)) options = this.options.job || {};
         if (is.not.string(service) || is.empty(service)) throw new Error('invalid service');
+        else if (!this.services[service]) throw new Error('service not accepted');
         else if (is.not.string(method) || is.empty(method)) throw new Error('invalid method');
-        else if (is.not.object(data) || is.array(data)) throw new Error('invalid data');
+        else if (is.array(data) || is.not.object(data)) throw new Error('invalid data');
         else if (is.not.object(options) || is.array(options))
             throw new Error('invalid options');
 
@@ -77,6 +78,28 @@ class Client extends Base {
                 else job[config](options[config]);
         await job.save();
         return job;
+    }
+
+    /**
+     * @description returns number of jobs for each state
+     * @param {String} service name of an existing service
+     * @returns Object
+     * @memberof Client
+     */
+    async health(service) {
+        if (is.string(service) && is.not.empty(service)) {
+            if (!this.services[service]) throw new Error('service not accepted');
+            else return await this.services[service].checkHealth();
+        }
+        const response = {};
+        for (const service of Object.keys(this.services)) {
+            const counts = await this.services[service].checkHealth();
+            for (const key of Object.keys(counts)) {
+                if (is.not.number(response[key])) response[key] = 0;
+                response[key] += counts[key];
+            }
+        }
+        return response;
     }
 
     /**
@@ -92,10 +115,29 @@ class Client extends Base {
     async send(service, method, data, options) {
         const job = await this.forward(service, method, data, options);
         return new Promise((resolve, reject) => {
-            job.on('succeeded', resolve);
-            job.on('failed', reject);
+            job.on('succeeded', function (response) {
+                resolve({ job, response });
+            });
+            job.on('failed', function (error) {
+                reject({ job, error });
+            });
             // TODO: do we need to handle another event too?!
         });
+    }
+
+    /**
+     * @description returns an existing job by id
+     * @param {String} service name of an existing service
+     * @param {Number} id job id
+     * @returns Job
+     * @memberof Client
+     */
+    async job(service, id) {
+        if (is.not.string(service) || is.empty(service))
+            throw new Error('invalid service');
+        else if (!this.services[service]) throw new Error('service not accepted');
+        else if (is.not.number(id)) throw new Error('invalid job id');
+        else return await this.services[service].getJob(id);
     }
 
     /**
