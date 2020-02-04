@@ -56,30 +56,39 @@ afterAll(async done => {
 
 const payload = { t: Date.now() };
 
-test('invalid service attempt', async done => {
+test('invalid service attempt', async () => {
     await expect(server.addService()).rejects.toThrow();
-    done();
 });
 
-test('echo', async done => {
-    const r = await client.send('test', 'test', payload);
-    expect(r.t).toEqual(payload.t);
-    done();
+test('echo', async () => {
+    const { response } = await client.send('test', 'test', payload);
+    expect(response.t).toEqual(payload.t);
 });
 
-test('throw', async done => {
-    await expect(client.send('test', 'throws', payload)).rejects.toThrow();
-    done();
+test('throw', async () => {
+    try {
+        await client.send('test', 'throws', payload);
+        expect(false).toBeTruthy();
+    } catch ({ error }) {
+        expect(Promise.reject(error)).rejects.toThrow();
+    }
 });
 
-test('conditional success', async done => {
-    const r = await client.send('test', 'conditionalSuccess', payload);
-    expect(r.t).toEqual(payload.t);
-    done();
+test('conditional success', async () => {
+    const { response } = await client.send('test', 'conditionalSuccess', payload);
+    expect(response.t).toEqual(payload.t);
 });
 
-test('delay', async done => {
-    await expect(client.send('test', 'delay', payload, { timeout: 100, retries: 2 }))
-        .rejects.toThrow();
-    done();
+test('conditional success', async () => {
+    const counts = await client.health('test');
+    expect(counts.newestJob).toBeTruthy();
+});
+
+test('delay', async () => {
+    try {
+        await client.send('test', 'delay', payload, { timeout: 100, retries: 2 });
+        expect(false).toBeTruthy();
+    } catch ({ error }) {
+        expect(Promise.reject(error)).rejects.toThrow();
+    }
 });
