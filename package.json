@@ -1,6 +1,6 @@
 {
   "name": "beems",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "a bee-queue based minimalist toolkit for building fast, decentralized, fault tolerant and scalable microservices",
   "keywords": [
     "bee",
@@ -34,14 +34,14 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.1",
     "jest": "^25.1.0"
   },
   "dependencies": {
     "bee-queue": "^1.2.3",
     "is_js": "^0.9.0",
-    "pino": "^5.16.0"
+    "pino": "^5.17.0"
   },
   "jest": {
     "testEnvironment": "node"
