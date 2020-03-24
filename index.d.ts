@@ -15,6 +15,8 @@ export class Client {
     acceptService(service: string, options?: object): void;
     acceptServices(services: string[], options?: object): void;
     close(): Promise<any>;
+    health(service: string): Promise<any>;
+    job(service: string, id: number): Promise<any>;
     forward(service: string, method: string, data: object, options?: object): Promise<any>;
     send(service: string, method: string, data: object, options?: object): Promise<any>;
 }
