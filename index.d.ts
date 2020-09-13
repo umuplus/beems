@@ -5,7 +5,7 @@ export interface Options {
 }
 
 export class Service {
-    constructor(name: string);
+    constructor(name: string, options?: object);
     _name(): string;
     _run(): Promise<any>;
 }

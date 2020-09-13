@@ -1,6 +1,6 @@
 {
   "name": "beems",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "a bee-queue based minimalist toolkit for building fast, decentralized, fault tolerant and scalable microservices",
   "keywords": [
     "bee",

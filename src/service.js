@@ -1,6 +1,7 @@
 'use strict';
 
 const is = require('is_js');
+const pino = require('pino');
 
 /**
  * @description Service class
@@ -10,11 +11,18 @@ class Service {
   /**
    * @description Creates an instance of Service.
    * @param {String} name service name
+   * @param {Object} [options] service options
    * @memberof Service
    */
-  constructor(name) {
+  constructor(name, options) {
     if (is.string(name) && is.not.empty(name)) this.name = name;
     else throw new Error(`invalid service name: ${name}`);
+
+    this._options = Object.assign({}, options || {});
+
+    this._logger = pino(
+      Object.assign({ level: 'error' }, is.object(this._options.pino) ? this._options.pino : {}),
+    );
   }
 
   /**
